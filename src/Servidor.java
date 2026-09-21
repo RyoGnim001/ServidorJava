@@ -55,9 +55,19 @@ public class Servidor {
                 conexoesAtivas.add(conexao);
                 System.out.println("Ativando conexão. Ativas: " + conexoesAtivas.size());
 
+                // Handshake inicial: estas duas linhas entram na fila de
+                // respostas ANTES das threads começarem. Assim que a
+                // ThreadEscrever ligar e chamar filaRespostas.take(), elas
+                // serão as duas primeiras mensagens enviadas ao cliente —
+                // exatamente o que o Client.py espera com receber_linha()
+                // duas vezes seguidas logo após conectar.
+                int porta = conexao.cliente().getPort();
+                conexao.filaRepostas().put("__ID__" + porta);
+                conexao.filaRepostas().put("Bem-vindo ao servidor!");
+
                 // Cria as duas threads dedicadas para esta conexão
-                Thread threadLer = new Thread(new ThreadLer(conexao), "Leitura-" + conexao.cliente().getPort());
-                Thread threadEscrever = new Thread(new ThreadEscrever(conexao), "Escrita-" + conexao.cliente().getPort());
+                Thread threadLer = new Thread(new ThreadLer(conexao), "Leitura-" + porta);
+                Thread threadEscrever = new Thread(new ThreadEscrever(conexao), "Escrita-" + porta);
 
                 // Inicia as threads
                 threadLer.start();
