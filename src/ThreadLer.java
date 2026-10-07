@@ -2,6 +2,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
 import java.util.concurrent.BlockingQueue;
 
 public class ThreadLer implements Runnable {
@@ -20,7 +23,7 @@ public class ThreadLer implements Runnable {
 
             while ((mensagem = leitor.readLine()) != null) {
                 System.out.println("Mesagem: " + mensagem);
-                String[] partes = mensagem.split(";");
+                String[] partes = mensagem.split(";", 3);
                 String comando = partes[0];
 
                 if (comando.equalsIgnoreCase("0")) {
@@ -40,8 +43,13 @@ public class ThreadLer implements Runnable {
     }
 
     private String processarComando(String[] partes) {
+        String comando = partes[0].trim();
+
+        if (comando.equals("4")) {
+            return processarImagem();
+        }
+
         try {
-            String comando = partes[0];
             double num1 = Double.parseDouble(partes[1]);
             double num2 = Double.parseDouble(partes[2]);
             double resultado;
@@ -57,6 +65,24 @@ public class ThreadLer implements Runnable {
             return "OK;" + resultado;
         } catch (Exception e) {
             return "ERRO;Formato inválido. Use: comando;num1;num2";
+        }
+    }
+
+    private String processarImagem() {
+        // Funciona tanto com o diretório de execução em ServidorJava
+        // quanto com o diretório de execução na raiz do repositório.
+        Path caminho = Path.of("imagem", "universo.jpg");
+        if (!Files.isRegularFile(caminho)) {
+            caminho = Path.of("ServidorJava", "imagem", "universo.jpg");
+        }
+
+        try {
+            byte[] imagem = Files.readAllBytes(caminho);
+            String dadosBase64 = Base64.getEncoder().encodeToString(imagem);
+            return "OK;" + dadosBase64;
+        } catch (IOException e) {
+            System.out.println("Erro ao ler a imagem do servidor: " + e.getMessage());
+            return "ERRO;Não foi possível ler imagem/universo.jpg no servidor";
         }
     }
 }
