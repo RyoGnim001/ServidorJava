@@ -17,6 +17,7 @@ public class ThreadLer implements Runnable {
 
     @Override
     public void run() {
+        boolean fimEnviado = false;
         try (BufferedReader leitor = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
             String mensagem;
 
@@ -27,6 +28,7 @@ public class ThreadLer implements Runnable {
 
                 if (comando.equalsIgnoreCase("0")) {
                     filaRespostas.put("__FIM__");
+                    fimEnviado = true;
                     break;
                 }
 
@@ -38,6 +40,12 @@ public class ThreadLer implements Runnable {
             System.out.println("Erro na leitura: " + e.getMessage());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+        } finally {
+            if (!fimEnviado) {
+                // Em EOF, erro ou interrupção, encerra também a thread de escrita.
+                filaRespostas.clear();
+                filaRespostas.offer("__FIM__");
+            }
         }
     }
 }
