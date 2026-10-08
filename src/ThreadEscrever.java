@@ -17,7 +17,6 @@ public class ThreadEscrever implements Runnable {
         try (PrintWriter saida = new PrintWriter(socket.getOutputStream(), true)) {
 
             while (true) {
-                // take() bloqueia até ter algo na fila
                 String resposta = filaRespostas.take();
 
                 if (resposta.equals("__FIM__")) {

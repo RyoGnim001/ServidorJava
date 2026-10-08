@@ -8,7 +8,6 @@ public class Servidor {
     private static final int PORTA = 12345;
     private static final int MAX_ACESSOS = 3;
 
-    // Cada conexão atendida ocupa uma posição até seu encerramento.
     private final BlockingQueue<Conexao> filaConexoes = new ArrayBlockingQueue<>(MAX_ACESSOS);
 
     public void iniciar() throws IOException {
@@ -22,8 +21,6 @@ public class Servidor {
                 Conexao conexao = new Conexao(cliente);
 
                 try {
-                    // Se todas as posições estiverem ocupadas, esta thread espera
-                    // até uma conexão em atendimento ser removida da fila.
                     filaConexoes.put(conexao);
                 } catch (InterruptedException e) {
                     fecharSocket(cliente);
@@ -49,7 +46,6 @@ public class Servidor {
         Socket cliente = conexao.cliente();
         int porta = cliente.getPort();
 
-        // Mantém as duas mensagens iniciais antes das respostas aos comandos.
         conexao.filaRepostas().add("__ID__" + porta);
         conexao.filaRepostas().add("Bem-vindo ao servidor!");
 
