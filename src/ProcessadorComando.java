@@ -7,9 +7,7 @@ public class ProcessadorComando {
     public String processarComando(String[] partes) {
         String comando = partes[0].trim();
 
-        if (comando.equals("0")) {
-            System.exit(0);
-        } else if (comando.equals("4")) {
+        if (comando.equals("4")) {
             return processarImagem();
         }
 
@@ -33,8 +31,6 @@ public class ProcessadorComando {
     }
 
     private String processarImagem() {
-        // Funciona tanto com o diretório de execução em ServidorJava
-        // quanto com o diretório de execução na raiz do repositório.
         Path caminho = Path.of("imagem", "universo.jpg");
         if (!Files.isRegularFile(caminho)) {
             caminho = Path.of("ServidorJava", "imagem", "universo.jpg");
