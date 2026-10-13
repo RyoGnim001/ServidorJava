@@ -15,7 +15,7 @@ public class ProcessadorComando {
         }
 
         if (comando.equals("5")) {
-            return processarAluno();
+            return serializarAluno();
         }
 
         try {
@@ -58,7 +58,7 @@ public class ProcessadorComando {
      * como uma única linha de texto. O cliente Java detecta o prefixo
      * "SERIALIZED;" e faz o caminho inverso.
      */
-    private String processarAluno() {
+    private String serializarAluno() {
         try {
             // Aqui você pode variar os dados (ex.: sortear, ler de um arquivo etc.)
             Aluno aluno = new Aluno("João da Silva", "2024001234", "Ciência da Computação");
